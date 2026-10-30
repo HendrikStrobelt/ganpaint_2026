@@ -7,7 +7,6 @@
 # environments and build output
 .venv/
 node_modules/
-web/dist/
 __pycache__/
 *.pyc
 *.egg-info/

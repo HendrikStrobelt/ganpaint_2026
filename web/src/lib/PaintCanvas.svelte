@@ -3,7 +3,7 @@
 
   let { editor }: { editor: Editor } = $props();
 
-  const COLORS = { draw: '#0bc6d4', remove: '#e1484a' } as const;
+  const COLORS = { draw: '#08bdba', remove: '#fa4d56' } as const;
   const RADIUS = 1; // brush radius in canvas-grid cells, as in the original UI
 
   let overlay: HTMLCanvasElement;
@@ -103,10 +103,8 @@
     position: relative;
     width: min(100%, 512px);
     aspect-ratio: 1;
-    border-radius: 8px;
     overflow: hidden;
-    background: var(--surface-2);
-    box-shadow: 0 1px 4px rgb(0 0 0 / 0.25);
+    background: var(--cds-layer-01, #262626);
   }
   img,
   canvas {

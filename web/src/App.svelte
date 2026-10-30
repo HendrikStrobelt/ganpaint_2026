@@ -1,5 +1,8 @@
 <script lang="ts">
   import { onMount } from 'svelte';
+  import { Content, Header, HeaderNav, HeaderNavItem, InlineLoading, InlineNotification } from 'carbon-components-svelte';
+  import About from './lib/About.svelte';
+  import { LINKS, PAPER } from './lib/about';
   import Controls from './lib/Controls.svelte';
   import Gallery from './lib/Gallery.svelte';
   import History from './lib/History.svelte';
@@ -19,42 +22,61 @@
 
 <svelte:window onkeydown={key} />
 
-<main>
-  <header>
-    <h1>GANPaint</h1>
-    <p>Paint trees, grass, doors, sky, clouds, brick and domes into a GAN-generated church.</p>
-  </header>
+<Header companyName="MIT-IBM Watson AI Lab" platformName="GANPaint" href="#">
+  <HeaderNav>
+    {#each LINKS as l (l.href)}
+      <HeaderNavItem href={l.href} text={l.text} target="_blank" rel="noopener noreferrer" />
+    {/each}
+  </HeaderNav>
+</Header>
 
-  {#if editor.error}
-    <p class="error" role="alert">{editor.error}</p>
-  {/if}
+<Content>
+  <main>
+    <header class="intro">
+      <h1>GANPaint</h1>
+      <p>Paint trees, grass, doors, sky, clouds, brick and domes into a GAN-generated church.</p>
+      <p class="byline">
+        Based on <em>GAN Dissection</em> ({PAPER.venue}) by {PAPER.authors.join(', ')}.
+      </p>
+    </header>
 
-  {#if editor.info}
-    <div class="layout">
-      <PaintCanvas {editor} />
-      <div class="side">
-        <Controls {editor} />
-        <Gallery {editor} />
-        <History {editor} />
+    {#if editor.error}
+      <InlineNotification kind="error" title="Error" subtitle={editor.error} hideCloseButton />
+    {/if}
+
+    {#if editor.info}
+      <div class="layout">
+        <PaintCanvas {editor} />
+        <div class="side">
+          <Controls {editor} />
+          <Gallery {editor} />
+          <History {editor} />
+        </div>
       </div>
-    </div>
-  {:else if !editor.error}
-    <p>Loading…</p>
-  {/if}
-</main>
+    {:else if !editor.error}
+      <InlineLoading description="Loading…" />
+    {/if}
+
+    <About />
+  </main>
+</Content>
 
 <style>
   main {
     max-width: 1100px;
     margin: 0 auto;
-    padding: 16px;
   }
-  header h1 {
+  .intro h1 {
     margin: 0;
+    font-size: 2rem;
+    font-weight: 300;
   }
-  header p {
-    margin: 4px 0 16px;
+  .intro p {
+    margin: 4px 0 0;
     color: var(--muted);
+  }
+  .intro {
+    margin-bottom: 24px;
   }
   .layout {
     display: flex;
@@ -65,14 +87,8 @@
   .side {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 24px;
     flex: 1 1 320px;
     min-width: 0;
-  }
-  .error {
-    padding: 8px 12px;
-    border-radius: 6px;
-    background: #d03c4033;
-    border: 1px solid #d03c40;
   }
 </style>

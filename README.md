@@ -6,6 +6,8 @@ Svelte 5 + Vite + TypeScript frontend. Painting edits units of ProGAN `layer4` (
 `x * (1 - a) + v * a` on the units that match the brush, with `v` the unit's 0.99-quantile activation to draw
 and 0 to remove.
 
+![GANPaint web UI: a church with a tree stroke painted onto it](docs/screenshot.jpg)
+
 ```
 pipeline/   ganpaint_pipeline: generator loading, segmenter, dissection, ACE, export   (uv project)
 server/     ganpaint_server: FastAPI app, intervention math, tests                      (uv project)

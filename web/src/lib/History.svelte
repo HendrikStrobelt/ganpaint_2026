@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { Button } from 'carbon-components-svelte';
+  import TrashCan from 'carbon-icons-svelte/lib/TrashCan.svelte';
   import type { Editor } from './state.svelte';
 
   let { editor }: { editor: Editor } = $props();
@@ -12,7 +14,14 @@
         <li onmouseenter={() => (editor.hovered = s.key)} onmouseleave={() => (editor.hovered = null)}>
           <span class="dot {s.mode}" aria-hidden="true"></span>
           <span class="name">{i + 1}. {s.mode} {s.brush} ({s.strength})</span>
-          <button class="small" aria-label={`Delete stroke ${i + 1}`} onclick={() => editor.removeStroke(s.key)}>✕</button>
+          <Button
+            kind="ghost"
+            size="small"
+            icon={TrashCan}
+            iconDescription={`Delete stroke ${i + 1}`}
+            tooltipPosition="left"
+            onclick={() => editor.removeStroke(s.key)}
+          />
         </li>
       {/each}
     </ol>
@@ -24,8 +33,10 @@
     width: min(100%, 512px);
   }
   h2 {
-    margin: 0 0 6px;
-    font-size: 0.95rem;
+    margin: 0 0 8px;
+    font-size: 0.875rem;
+    font-weight: 400;
+    color: var(--muted);
   }
   ol {
     list-style: none;
@@ -33,21 +44,22 @@
     padding: 0;
     display: flex;
     flex-direction: column;
-    gap: 4px;
-    max-height: 180px;
+    gap: 1px;
+    max-height: 220px;
     overflow-y: auto;
   }
   li {
     display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 2px 6px;
-    border-radius: 6px;
-    background: var(--surface-2);
-    font-size: 0.9rem;
+    gap: 12px;
+    padding-left: 12px;
+    background: var(--cds-layer-01, #262626);
+    font-size: 0.875rem;
   }
   li:hover {
-    outline: 1px solid var(--accent);
+    background: var(--cds-layer-hover-01, #333);
+    outline: 1px solid var(--cds-focus, #fff);
+    outline-offset: -1px;
   }
   .name {
     flex: 1;
@@ -58,13 +70,9 @@
     border-radius: 50%;
   }
   .dot.draw {
-    background: #0bc6d4;
+    background: var(--draw);
   }
   .dot.remove {
-    background: #e1484a;
-  }
-  .small {
-    padding: 0 6px;
-    min-height: 24px;
+    background: var(--remove);
   }
 </style>

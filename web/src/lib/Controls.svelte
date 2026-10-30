@@ -1,42 +1,56 @@
 <script lang="ts">
+  import { Button, ContentSwitcher, RadioTile, Select, SelectItem, Switch, TileGroup } from 'carbon-components-svelte';
+  import Download from 'carbon-icons-svelte/lib/Download.svelte';
+  import Reset from 'carbon-icons-svelte/lib/Reset.svelte';
+  import Undo from 'carbon-icons-svelte/lib/Undo.svelte';
   import type { Editor } from './state.svelte';
 
   let { editor }: { editor: Editor } = $props();
+
+  let modeIndex = $state(0);
+  $effect(() => {
+    editor.mode = modeIndex === 0 ? 'draw' : 'remove';
+  });
 </script>
 
 <section class="controls" aria-label="Painting tools">
-  <div class="group" role="radiogroup" aria-label="Action">
-    <button role="radio" aria-checked={editor.mode === 'draw'} class="draw" onclick={() => (editor.mode = 'draw')}>
-      Draw
-    </button>
-    <button role="radio" aria-checked={editor.mode === 'remove'} class="remove" onclick={() => (editor.mode = 'remove')}>
-      Remove
-    </button>
+  <div class="mode" class:remove={modeIndex === 1}>
+    <ContentSwitcher bind:selectedIndex={modeIndex}>
+      <Switch text="Draw" />
+      <Switch text="Remove" />
+    </ContentSwitcher>
   </div>
 
-  <div class="group brushes" role="radiogroup" aria-label="Brush">
-    {#each editor.info?.brushes ?? [] as b (b.name)}
-      <button role="radio" aria-checked={editor.brush === b.name} onclick={() => (editor.brush = b.name)}>
-        {b.label}
-      </button>
-    {/each}
-  </div>
-
-  <label class="strength">
-    Strength
-    <select bind:value={editor.strength}>
-      {#each Object.entries(editor.info?.strengths ?? {}) as [name, units] (name)}
-        <option value={name}>{name} ({units} units)</option>
+  <TileGroup legendText="Brush" bind:selected={editor.brush}>
+    <div class="brushes">
+      {#each editor.info?.brushes ?? [] as b (b.name)}
+        <RadioTile value={b.name}>{b.label}</RadioTile>
       {/each}
-    </select>
-  </label>
+    </div>
+  </TileGroup>
 
-  <div class="group actions">
-    <button onclick={() => editor.undo()} disabled={!editor.strokes.length}>Undo</button>
-    <button onclick={() => editor.reset()} disabled={!editor.strokes.length}>Reset</button>
-    <a class="button" href={editor.image} download={`ganpaint-${editor.sampleId}.${editor.image.startsWith('data:image/webp') || editor.image.endsWith('.webp') ? 'webp' : 'png'}`}>
+  <Select labelText="Strength" bind:selected={editor.strength}>
+    {#each Object.entries(editor.info?.strengths ?? {}) as [name, units] (name)}
+      <SelectItem value={name} text={`${name} (${units} units)`} />
+    {/each}
+  </Select>
+
+  <div class="actions">
+    <Button kind="secondary" size="small" icon={Undo} disabled={!editor.strokes.length} onclick={() => editor.undo()}>
+      Undo
+    </Button>
+    <Button kind="danger-tertiary" size="small" icon={Reset} disabled={!editor.strokes.length} onclick={() => editor.reset()}>
+      Reset
+    </Button>
+    <Button
+      kind="primary"
+      size="small"
+      icon={Download}
+      href={editor.image}
+      download={`ganpaint-${editor.sampleId}.${editor.image.startsWith('data:image/webp') || editor.image.endsWith('.webp') ? 'webp' : 'png'}`}
+    >
       Download
-    </a>
+    </Button>
   </div>
 </section>
 
@@ -44,31 +58,38 @@
   .controls {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 20px;
     width: min(100%, 512px);
   }
-  .group {
+  .brushes {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 4px;
+    margin-top: 8px;
+  }
+  .brushes :global(.bx--tile--selectable) {
+    width: 100%;
+    min-height: 0;
+    margin: 0;
+    padding: 10px 12px;
+    text-align: center;
+    text-transform: capitalize;
+  }
+  .brushes :global(.bx--tile__checkmark) {
+    display: none;
+  }
+  .actions {
     display: flex;
     flex-wrap: wrap;
-    gap: 6px;
-  }
-  .strength {
-    display: flex;
-    align-items: center;
     gap: 8px;
-    font-size: 0.9rem;
   }
-  button[aria-checked='true'] {
-    background: var(--accent);
-    border-color: var(--accent);
-    color: #fff;
+  .mode :global(.bx--content-switcher--selected) {
+    color: #161616;
   }
-  button.draw[aria-checked='true'] {
-    background: #0aa5b1;
-    border-color: #0aa5b1;
+  .mode :global(.bx--content-switcher--selected::after) {
+    background: var(--draw);
   }
-  button.remove[aria-checked='true'] {
-    background: #d03c40;
-    border-color: #d03c40;
+  .mode.remove :global(.bx--content-switcher--selected::after) {
+    background: var(--remove);
   }
 </style>

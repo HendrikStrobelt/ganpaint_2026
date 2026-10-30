@@ -1,0 +1,27 @@
+[project]
+name = "ganpaint-pipeline"
+version = "0.1.0"
+description = "Recreates the GANPaint church experiment: ProGAN conversion, dissection, ACE rankings"
+requires-python = ">=3.11"
+dependencies = [
+  "torch>=2.5",
+  "torchvision",
+  "numpy>=2",
+  "scipy",
+  "safetensors",
+  "gdown",
+  "typer",
+  "pillow",
+  "tqdm",
+  "scikit-image",
+]
+
+[project.scripts]
+ganpaint-pipeline = "ganpaint_pipeline.cli:app"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["ganpaint_pipeline"]

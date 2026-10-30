@@ -1,0 +1,16 @@
+# data: downloaded inputs and everything the pipeline generates (large; rebuild with the README steps)
+/data/
+*.pth
+*.safetensors
+*.pkl
+*.npz
+# environments and build output
+.venv/
+node_modules/
+web/dist/
+__pycache__/
+*.pyc
+*.egg-info/
+.pytest_cache/
+# local scratch (not part of the project)
+/t.txt

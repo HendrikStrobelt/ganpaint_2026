@@ -22,10 +22,12 @@ Needs [uv](https://docs.astral.sh/uv/). A CUDA GPU is optional. [pnpm](https://p
 only needed to change the UI: the compiled UI is committed in `web/dist/`.
 
 **1. Data.** The server needs `data/churchoutdoor/generator.safetensors` and `data/churchoutdoor/ganpaint.json`.
-They are not in git. If you already have a `data/` folder from a previous run, copy it into the repo root and
-skip to step 2. Otherwise generate them once (see [Inputs](#inputs-datadownloads) and
+They are not in git. If `GANPAINT_DATA` holds no project, the server downloads them (about 73 MB) from the
+Hugging Face repo [`hen/ganpaint-churchoutdoor`](https://huggingface.co/hen/ganpaint-churchoutdoor)
+on first start, so you can go straight to step 2. Set `GANPAINT_HF_REPO` to use another repo, or to an empty string
+to disable the download. To rebuild the files instead, see [Inputs](#inputs-datadownloads) and
 [Running it](#running-it) for the one-off steps; on a GB10 dissection takes about 4 minutes and each of the
-three ACE classes 30-45 minutes).
+three ACE classes 30-45 minutes.
 
 **2. Start the server**
 
@@ -49,7 +51,7 @@ prints (<http://localhost:5173/>). It hot-reloads and proxies `/api` to port 800
 `web/dist/`, so after changing the UI run `pnpm run build` and commit the updated `web/dist/` too.
 
 If the page says "the server has no projects", `GANPAINT_DATA` does not point at the folder that contains
-`churchoutdoor/ganpaint.json`.
+`churchoutdoor/ganpaint.json` and the download was disabled or failed.
 
 ## Inputs (`data/downloads/`)
 

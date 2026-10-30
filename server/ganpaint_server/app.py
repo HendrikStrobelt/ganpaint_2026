@@ -19,6 +19,8 @@ from .project import Project, data_url, encode_image
 
 CANVAS_GRID = 32  # strokes are painted on a 32 x 32 mask, like the original UI
 MAX_MASK_CHARS = 100_000
+DEFAULT_HF_REPO = "hen/ganpaint-churchoutdoor"
+HF_REVISION = "db90610e5f91847a224c96fc8b8f22b7e473c072"  # commit of hen/ganpaint-churchoutdoor with the data files
 
 
 class Stroke(BaseModel):
@@ -103,11 +105,28 @@ def default_device():
     return "cpu"
 
 
+def download_data(data_dir, repo_id, revision=None):
+    from huggingface_hub import snapshot_download
+
+    snapshot_download(
+        repo_id=repo_id,
+        revision=revision,
+        local_dir=data_dir,
+        allow_patterns=["*/ganpaint.json", "*/generator.safetensors"],
+    )
+
+
 def app_from_env():
-    """uvicorn --factory ganpaint_server.app:app_from_env  (GANPAINT_DATA, GANPAINT_WEB, GANPAINT_DEVICE).
+    """uvicorn --factory ganpaint_server.app:app_from_env
+    (GANPAINT_DATA, GANPAINT_WEB, GANPAINT_DEVICE, GANPAINT_HF_REPO, GANPAINT_HF_REVISION).
 
     GANPAINT_DEVICE defaults to the best available of cuda, mps, cpu.
+    If GANPAINT_DATA holds no project, one is downloaded from the Hugging Face repo GANPAINT_HF_REPO
+    (set it to an empty string to disable the download).
     """
     data = os.environ.get("GANPAINT_DATA", "data")
     device = os.environ.get("GANPAINT_DEVICE") or default_device()
+    repo = os.environ.get("GANPAINT_HF_REPO", DEFAULT_HF_REPO)
+    if repo and not any(Path(data).glob("*/ganpaint.json")):
+        download_data(data, repo, os.environ.get("GANPAINT_HF_REVISION") or HF_REVISION)
     return create_app(load_projects(data, device), os.environ.get("GANPAINT_WEB"))

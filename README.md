@@ -7,6 +7,11 @@ Svelte 5 + Vite + TypeScript frontend. Painting edits units of ProGAN `layer4` (
 `x * (1 - a) + v * a` on the units that match the brush, with `v` the unit's 0.99-quantile activation to draw
 and 0 to remove.
 
+Based on the paper *GAN Dissection: Visualizing and Understanding Generative Adversarial Networks* (Bau, Zhu,
+Strobelt, Zhou, Tenenbaum, Freeman, Torralba; ICLR 2019):
+[paper](https://arxiv.org/abs/1811.10597) · [project page](https://gandissect.csail.mit.edu) ·
+[original code](https://github.com/CSAILVision/GANDissect)
+
 ![GANPaint web UI: a church with a tree stroke painted onto it](docs/screenshot.jpg)
 
 ```

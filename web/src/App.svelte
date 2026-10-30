@@ -33,8 +33,11 @@
 <Content>
   <main>
     <header class="intro">
-      <h1>GANPaint</h1>
-      <p>Paint trees, grass, doors, sky, clouds, brick and domes into a GAN-generated church.</p>
+      <h1>GANPaint: paint with the neurons of a GAN</h1>
+      <p>
+        Every brushstroke switches on or off the neurons that draw trees, grass, doors, sky, clouds, brick and domes
+        inside a GAN-generated church.
+      </p>
       <p class="byline">
         Based on <em>GAN Dissection</em> ({PAPER.venue}) by {PAPER.authors.join(', ')}.
       </p>

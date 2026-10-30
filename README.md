@@ -1,6 +1,7 @@
 # GANPaint (reimplementation)
 
-Paint trees, grass, doors, sky, clouds, brick and domes into GAN-generated churches. A modern rewrite of
+Paint with the neurons of a GAN: every brushstroke switches on or off the neurons that draw trees, grass, doors,
+sky, clouds, brick and domes in a GAN-generated church. A modern rewrite of
 [CSAILVision/gandissect](https://github.com/CSAILVision/gandissect)'s GANPaint: PyTorch 2 + FastAPI backend,
 Svelte 5 + Vite + TypeScript frontend. Painting edits units of ProGAN `layer4` (512 x 8 x 8): a stroke becomes
 `x * (1 - a) + v * a` on the units that match the brush, with `v` the unit's 0.99-quantile activation to draw

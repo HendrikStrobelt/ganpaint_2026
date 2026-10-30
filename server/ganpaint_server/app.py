@@ -10,6 +10,7 @@ import os
 from pathlib import Path
 from typing import Literal
 
+import torch
 from fastapi import FastAPI, HTTPException, Response
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
@@ -94,8 +95,19 @@ def create_app(projects, web_dir=None):
     return app
 
 
+def default_device():
+    if torch.cuda.is_available():
+        return "cuda"
+    if torch.backends.mps.is_available():
+        return "mps"
+    return "cpu"
+
+
 def app_from_env():
-    """uvicorn --factory ganpaint_server.app:app_from_env  (GANPAINT_DATA, GANPAINT_WEB, GANPAINT_DEVICE)."""
+    """uvicorn --factory ganpaint_server.app:app_from_env  (GANPAINT_DATA, GANPAINT_WEB, GANPAINT_DEVICE).
+
+    GANPAINT_DEVICE defaults to the best available of cuda, mps, cpu.
+    """
     data = os.environ.get("GANPAINT_DATA", "data")
-    device = os.environ.get("GANPAINT_DEVICE", "cuda")
+    device = os.environ.get("GANPAINT_DEVICE") or default_device()
     return create_app(load_projects(data, device), os.environ.get("GANPAINT_WEB"))

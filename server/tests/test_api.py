@@ -1,4 +1,5 @@
 import base64
+import copy
 import io
 
 import numpy as np
@@ -35,6 +36,20 @@ def project():
         gallery=[0, 1, 2],
     )
     return Project("test", gen, config, z_pool=8)
+
+
+@pytest.mark.skipif(not torch.backends.mps.is_available(), reason="needs MPS")
+def test_mps_matches_cpu():
+    torch.manual_seed(0)
+    gen = ProgressiveGenerator(256, sizes=[512] + [UNITS] * 7)
+    config = dict(
+        layer="layer4", generator="unused", levels=[2.0 + u for u in range(UNITS)],
+        strengths={"low": 2, "med": 4, "high": 6}, brushes={"tree": dict(units=[3, 5, 7, 9, 11, 13])}, gallery=[0],
+    )
+    strokes = [dict(brush="tree", mode="draw", strength="high", mask=FULL_MASK)]
+    cpu = Project("cpu", gen, config, device="cpu", z_pool=8).generate(1, strokes).astype(int)
+    mps = Project("mps", copy.deepcopy(gen), config, device="mps", z_pool=8).generate(1, strokes).astype(int)
+    assert np.abs(cpu - mps).max() <= 2
 
 
 @pytest.fixture

@@ -29,15 +29,16 @@ three ACE classes 30-45 minutes).
 
 ```bash
 cd server
-GANPAINT_DATA=../data GANPAINT_WEB=../web/dist GANPAINT_DEVICE=cpu \
+GANPAINT_DATA=../data GANPAINT_WEB=../web/dist \
   uv run uvicorn --factory ganpaint_server.app:app_from_env --port 8000
 ```
 
 Open <http://127.0.0.1:8000/>: pick a church, choose Draw or Remove and a brush, then drag on the image.
 Ctrl+Z undoes a stroke.
 
-* `GANPAINT_DEVICE=cuda` is faster (about 10-15 ms per edit against about 150 ms on CPU) and is the default
-  if the variable is unset, so set `cpu` on a machine without a GPU.
+* The device is picked automatically (cuda, then mps, then cpu); set `GANPAINT_DEVICE=cuda|mps|cpu` to override.
+  An edit takes about 10-15 ms on CUDA against about 150 ms on a CPU (GB10); on an Apple M4 Max about 5 ms on
+  `mps` against about 20 ms on `cpu`.
 * The server binds to localhost. Adding `--host 0.0.0.0` exposes it to your network; it has no
   authentication or rate limiting, so only do that on a trusted network.
 

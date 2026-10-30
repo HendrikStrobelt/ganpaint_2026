@@ -25,7 +25,7 @@ only needed to change the UI: the compiled UI is committed in `web/dist/`.
 They are not in git. If `GANPAINT_DATA` holds no project, the server downloads them (about 73 MB) from the
 Hugging Face repo [`hen/ganpaint-churchoutdoor`](https://huggingface.co/hen/ganpaint-churchoutdoor)
 on first start, so you can go straight to step 2. Set `GANPAINT_HF_REPO` to use another repo, or to an empty string
-to disable the download. To rebuild the files instead, see [Inputs](#inputs-datadownloads) and
+to disable the download, and `GANPAINT_HF_REVISION` to fetch a different revision than the one the code pins. To rebuild the files instead, see [Inputs](#inputs-datadownloads) and
 [Running it](#running-it) for the one-off steps; on a GB10 dissection takes about 4 minutes and each of the
 three ACE classes 30-45 minutes.
 
@@ -40,6 +40,8 @@ GANPAINT_DATA=../data GANPAINT_WEB=../web/dist \
 Open <http://127.0.0.1:8000/>: pick a church, choose Draw or Remove and a brush, then drag on the image.
 Ctrl+Z undoes a stroke.
 
+* If `GANPAINT_DATA` (default `data`) contains no `*/ganpaint.json`, the first start downloads the data from
+  Hugging Face (step 1); later starts reuse the downloaded files and need no network.
 * The device is picked automatically (cuda, then mps, then cpu); set `GANPAINT_DEVICE=cuda|mps|cpu` to override.
   An edit takes about 10-15 ms on CUDA against about 150 ms on a CPU (GB10); on an Apple M4 Max about 5 ms on
   `mps` against about 20 ms on `cpu`.

@@ -38,8 +38,11 @@ def dissect(size: int = 1000, outdir: Path = PROJECT / "dissect"):
 
 
 @app.command()
-def ace(classname: str, add_at: str = "cloc", dissect_dir: Path = PROJECT / "dissect", write: bool = True):
-    """Learn the ACE unit ranking for a class; with --write, add `<class>-ace` to dissect.json."""
+def ace(classname: str, add_at: str = "ploc", dissect_dir: Path = PROJECT / "dissect", write: bool = True):
+    """Learn the ACE unit ranking for a class; with --write, add `<class>-ace` to dissect.json.
+
+    add_at='ploc' is the original repository's loss and what REPORT.md used; 'cloc' measures at the candidate cells.
+    """
     from .ace import add_ace_ranking_to_dissection, run_ace
     from .segmenter import UnifiedParsingSegmenter
 

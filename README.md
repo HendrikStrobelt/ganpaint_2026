@@ -14,6 +14,40 @@ data/       downloads/ (inputs), churchoutdoor/ (everything the pipeline produce
 reference/  files copied from the original repo, used while porting
 ```
 
+## Quick start
+
+Needs [uv](https://docs.astral.sh/uv/) and [pnpm](https://pnpm.io/) (which provides Node). A CUDA GPU is optional.
+
+**1. Data.** The server needs `data/churchoutdoor/generator.safetensors` and `data/churchoutdoor/ganpaint.json`.
+They are not in git. If you already have a `data/` folder from a previous run, copy it into the repo root and
+skip to step 2. Otherwise generate them once (see [Inputs](#inputs-datadownloads) and
+[Running it](#running-it) for the one-off steps; on a GB10 dissection takes about 4 minutes and each of the
+three ACE classes 30-45 minutes).
+
+**2. Build the UI and start the server**
+
+```bash
+cd web && pnpm install && pnpm run build && cd ..
+
+cd server
+GANPAINT_DATA=../data GANPAINT_WEB=../web/dist GANPAINT_DEVICE=cpu \
+  uv run uvicorn --factory ganpaint_server.app:app_from_env --port 8000
+```
+
+Open <http://127.0.0.1:8000/>: pick a church, choose Draw or Remove and a brush, then drag on the image.
+Ctrl+Z undoes a stroke.
+
+* `GANPAINT_DEVICE=cuda` is faster (about 10-15 ms per edit against about 150 ms on CPU) and is the default
+  if the variable is unset, so set `cpu` on a machine without a GPU.
+* The server binds to localhost. Adding `--host 0.0.0.0` exposes it to your network; it has no
+  authentication or rate limiting, so only do that on a trusted network.
+
+**UI development.** Run the server as above, then `cd web && pnpm run dev` and open the URL Vite prints
+(<http://localhost:5173/>). It hot-reloads and proxies `/api` to port 8000.
+
+If the page says "the server has no projects", `GANPAINT_DATA` does not point at the folder that contains
+`churchoutdoor/ganpaint.json`.
+
 ## Inputs (`data/downloads/`)
 
 | path | what | where it came from |
